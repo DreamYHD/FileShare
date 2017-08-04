@@ -1,11 +1,20 @@
 package cn.edu.nuc.androidlab.fileshare.util
 
 import android.content.Context
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.PixelFormat
+import android.graphics.drawable.Drawable
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.support.v4.graphics.BitmapCompat
 import android.util.Log
+import cn.edu.nuc.androidlab.fileshare.R
 import cn.edu.nuc.androidlab.fileshare.bean.FileInfo
 import java.io.File
 import java.io.FileFilter
@@ -27,9 +36,9 @@ object FileUtil{
     val MP3  : String  = ".mp3"
     val MP4  : String  = ".mp4"
 
-    val APK_CODE = 0X01
-    val IMG_CODE = 0X02
-    val MUSIC_CODE = 0X03
+    val APK_CODE = 0x01
+    val IMG_CODE = 0x02
+    val MUSIC_CODE = 0x03
     val VIDEO_CODE = 0x04
     val ERROR_CODE = 0x00
 
@@ -190,7 +199,6 @@ object FileUtil{
     }
 
 
-
     fun getSpecificTypeFiles(context : Context, extension : Array<String>) : List<FileInfo>{
         val fileInfoList : ArrayList<FileInfo> = ArrayList()
 
@@ -202,9 +210,10 @@ object FileUtil{
         var selection : String = ""
         for (i in 0..extension.size - 1){
             if(i != 0){
-                selection += " $selection OR "
+                selection += " OR $selection "
+            }else {
+                selection += " ${MediaStore.Files.FileColumns.DATA} LIKE '%${extension[i]}' "
             }
-            selection += " ${MediaStore.Files.FileColumns.DATA} LIKE '%${extension[i]}' "
         }
         val sortOrder = MediaStore.Files.FileColumns.DATE_MODIFIED
 
@@ -228,6 +237,23 @@ object FileUtil{
         return fileInfoList
     }
 
+    fun getVideoThumbnail(context : Context, path : String) : Bitmap {
+        val bitmap = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.MICRO_KIND)
+        return ThumbnailUtils.extractThumbnail(bitmap, 100 , 100)
+    }
+
+    fun getApkThumbnail(context : Context, path : String) : Drawable{
+        val pm : PackageManager = context.packageManager
+        val info : PackageInfo? = pm.getPackageArchiveInfo(path, PackageManager.GET_ACTIVITIES)
+        info?.let {
+            val appInfo = info.applicationInfo
+            appInfo.sourceDir = path
+            appInfo.publicSourceDir = path
+            return appInfo.loadIcon(pm)
+        }
+        return context.resources.getDrawable(R.mipmap.ic_launcher)
+    }
+
     fun getFileTypeCode (path : String?) : Int{
         if(path == null) return ERROR_CODE
         if(path.endsWith(JPG) || path.endsWith(JPEG) || path.endsWith(PNG))
@@ -240,6 +266,19 @@ object FileUtil{
             return VIDEO_CODE
         else
             return ERROR_CODE
+    }
+
+    fun drawableToBitmap(drawable : Drawable) : Bitmap{
+        val w = drawable.intrinsicWidth
+        val h = drawable.intrinsicHeight
+        val config : Bitmap.Config = if(drawable.opacity != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
+
+        val bitmap : Bitmap = Bitmap.createBitmap(w, h , config)
+        val canvas : Canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, w, h)
+        drawable.draw(canvas)
+
+        return bitmap
     }
 
 

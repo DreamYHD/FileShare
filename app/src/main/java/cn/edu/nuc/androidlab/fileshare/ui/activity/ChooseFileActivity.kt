@@ -10,10 +10,9 @@ import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
 
 import cn.edu.nuc.androidlab.fileshare.R
-import cn.edu.nuc.androidlab.fileshare.ui.fragment.ChooseAPKFragment
-import cn.edu.nuc.androidlab.fileshare.ui.fragment.ChooseMusicFragment
-import cn.edu.nuc.androidlab.fileshare.ui.fragment.ChoosePicFragment
-import cn.edu.nuc.androidlab.fileshare.ui.fragment.ChooseVideoFragment
+import cn.edu.nuc.androidlab.fileshare.bean.FileInfo
+import cn.edu.nuc.androidlab.fileshare.ui.fragment.*
+import cn.edu.nuc.androidlab.fileshare.util.FileUtil
 
 class ChooseFileActivity : AppCompatActivity() {
 
@@ -31,10 +30,10 @@ class ChooseFileActivity : AppCompatActivity() {
     }
 
     private fun initFragment() {
-        fragments.add(ChooseAPKFragment.instance)
-        fragments.add(ChoosePicFragment.instance)
-        fragments.add(ChooseMusicFragment.instance)
-        fragments.add(ChooseVideoFragment.instance)
+        fragments.add(FileInfoFragment.instance(FileUtil.APK_CODE))
+        fragments.add(FileInfoFragment.instance(FileUtil.IMG_CODE))
+        fragments.add(FileInfoFragment.instance(FileUtil.MUSIC_CODE))
+        fragments.add(FileInfoFragment.instance(FileUtil.VIDEO_CODE))
     }
 
     fun initView(){

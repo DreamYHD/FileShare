@@ -6,15 +6,17 @@ import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.widget.Button
 import cn.edu.nuc.androidlab.fileshare.ui.activity.ChooseFileActivity
+import cn.edu.nuc.androidlab.fileshare.util.ApUtil
 import cn.edu.nuc.androidlab.fileshare.util.FileUtil
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
     private val TAG : String = this.javaClass.simpleName
 
     private lateinit var bt_send : Button
-    private lateinit var bt_receive : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +41,12 @@ class MainActivity : AppCompatActivity() {
         bt_send.setOnClickListener {
             startActivity(Intent(MainActivity@this, ChooseFileActivity::class.java))
         }
-        bt_receive = findViewById(R.id.bt_receive) as Button
+
+        bt_receive.setOnClickListener {
+            Log.i(TAG, "hotspot")
+            //val apUtil = ApUtil.configApState(this, "ApTest")
+            Log.i(TAG, ApUtil.isApEnabled(this).toString())
+        }
     }
 
     private fun initData() {

@@ -14,9 +14,26 @@ class  FileInfo @JvmOverloads constructor(var path : String,
                var size : Long,
                var name : String,
                var extra : String? = null,
-               val bitmap : Bitmap? = null,
+               var bitmap : Bitmap? = null,
                val procceed : Long? = null,
                val result : Int?= null) :Serializable{
+
+    companion object {
+        @JvmStatic
+        val APK : String = ".apk"
+
+        @JvmStatic
+        val JPG : String = ".jpg"
+
+        @JvmStatic
+        val JPEG : String = ".jpeg"
+
+        @JvmStatic
+        val MP3 : String = ".mp3"
+
+        @JvmStatic
+        val MP4 : String = ",mp4"
+    }
 
 
     override fun toString(): String {
