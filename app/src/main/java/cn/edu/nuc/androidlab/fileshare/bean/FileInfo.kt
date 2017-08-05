@@ -1,6 +1,7 @@
 package cn.edu.nuc.androidlab.fileshare.bean
 
 import android.graphics.Bitmap
+import org.json.JSONObject
 import java.io.Serializable
 
 /**
@@ -33,6 +34,14 @@ class  FileInfo @JvmOverloads constructor(var path : String,
 
         @JvmStatic
         val MP4 : String = ",mp4"
+    }
+
+    fun toJosnString() : String {
+        val jsonObject = JSONObject()
+        jsonObject.put("path", path)
+        jsonObject.put("type", type)
+        jsonObject.put("size", size)
+        return jsonObject.toString()
     }
 
 

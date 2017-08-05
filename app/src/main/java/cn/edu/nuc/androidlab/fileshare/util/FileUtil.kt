@@ -16,6 +16,7 @@ import android.support.v4.graphics.BitmapCompat
 import android.util.Log
 import cn.edu.nuc.androidlab.fileshare.R
 import cn.edu.nuc.androidlab.fileshare.bean.FileInfo
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileFilter
 
@@ -279,6 +280,12 @@ object FileUtil{
         drawable.draw(canvas)
 
         return bitmap
+    }
+
+    fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        return baos.toByteArray()
     }
 
 
