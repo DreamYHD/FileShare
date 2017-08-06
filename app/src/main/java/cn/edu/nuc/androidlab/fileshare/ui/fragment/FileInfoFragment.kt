@@ -24,6 +24,7 @@ class FileInfoFragment private constructor() : Fragment(){
     private var fileType : Int = 0x00
     private val file_list = ArrayList<FileInfo>()
     private lateinit var recyclerView : RecyclerView
+    private var onSelectedListener : OnSelectedListener? = null
 
     private constructor(type : Int) : this() {
         fileType = type
@@ -32,6 +33,10 @@ class FileInfoFragment private constructor() : Fragment(){
     companion object {
         @JvmStatic
         fun instance(type : Int) : FileInfoFragment = FileInfoFragment(type)
+    }
+
+    fun setOnSelectedListener(onSelectedListener : OnSelectedListener){
+        this.onSelectedListener = onSelectedListener
     }
 
 
@@ -44,14 +49,7 @@ class FileInfoFragment private constructor() : Fragment(){
         return rootView
     }
 
-    //扩展函数
-    fun ViewHolder.setImageWithPicasso(viewId : Int, url : String) : ViewHolder{
-        val view : ImageView = getView(viewId)
-        Glide.with(context)
-                .load(url)
-                .into(view)
-        return this
-    }
+
 
     private fun initData() {
         when(fileType){
@@ -67,7 +65,12 @@ class FileInfoFragment private constructor() : Fragment(){
                         t?.let {
                             holder?.setText(R.id.apk_name, it.name)
                             holder?.setImageBitmap(R.id.apk_cover, it.bitmap)
-                            holder?.setText(R.id.apk_size, "${FileUtil.byte2MemorySize(it.size)}")
+                            holder?.setText(R.id.apk_size, FileUtil.byte2MemorySize(it.size))
+                            holder?.itemView?.setOnClickListener {
+                                val isVisible = holder.isVisible(R.id.apk_selected)
+                                holder.setVisible(R.id.apk_selected, !isVisible)
+                                onSelectedListener?.changeSelected(t, !isVisible)
+                            }
                         }
                     }
                 }
@@ -79,6 +82,9 @@ class FileInfoFragment private constructor() : Fragment(){
                     override fun convert(holder: ViewHolder?, t: FileInfo?, position: Int) {
                         t?.let {
                             holder?.setImageWithPicasso(R.id.img_cover, it.path)
+                            /*holder?.itemView?.setOnClickListener {
+                                holder.setVisible(R.id.apk_selected, true)
+                            }*/
                         }
                     }
                 }
@@ -90,7 +96,7 @@ class FileInfoFragment private constructor() : Fragment(){
                     override fun convert(holder: ViewHolder?, t: FileInfo?, position: Int) {
                         t?.let {
                             holder?.setText(R.id.music_name, it.name)
-                            holder?.setText(R.id.music_size, "${FileUtil.byte2MemorySize(it.size)}")
+                            holder?.setText(R.id.music_size, FileUtil.byte2MemorySize(it.size))
                         }
                     }
                 }
@@ -106,11 +112,15 @@ class FileInfoFragment private constructor() : Fragment(){
                         t?.let {
                             holder?.setText(R.id.music_name, it.name)
                             holder?.setImageBitmap(R.id.music_cover, it.bitmap)
-                            holder?.setText(R.id.music_size, "${FileUtil.byte2MemorySize(it.size)}")
+                            holder?.setText(R.id.music_size, FileUtil.byte2MemorySize(it.size))
                         }
                     }
                 }
             }
         }
+    }
+
+    interface OnSelectedListener{
+        fun changeSelected(fileInfo : FileInfo, isSelect : Boolean)
     }
 }

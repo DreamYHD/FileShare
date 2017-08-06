@@ -1,9 +1,12 @@
 package cn.edu.nuc.androidlab.fileshare
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
@@ -11,7 +14,9 @@ import android.widget.Button
 import cn.edu.nuc.androidlab.fileshare.ui.activity.ChooseFileActivity
 import cn.edu.nuc.androidlab.fileshare.util.ApUtil
 import cn.edu.nuc.androidlab.fileshare.util.FileUtil
+import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.content_main.*
+
 
 class MainActivity : AppCompatActivity() {
     private val TAG : String = this.javaClass.simpleName
@@ -24,7 +29,17 @@ class MainActivity : AppCompatActivity() {
 
         initView()
 
-        initData()
+        val rxPermissions = RxPermissions(this)
+        rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .subscribe{
+                    granted ->
+                    if (granted){
+                        initData()
+                    }else{
+                        Snackbar.make(bt_send, "没有权限", Snackbar.LENGTH_INDEFINITE).show()
+                    }
+                }
+
     }
 
     private fun initView() {
@@ -53,7 +68,5 @@ class MainActivity : AppCompatActivity() {
         Thread(Runnable {
             FileUtil.getSpecificTypeFiles(this, arrayOf(FileUtil.MP3))
         }).run()
-
     }
-
 }

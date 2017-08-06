@@ -13,6 +13,7 @@ import cn.edu.nuc.androidlab.fileshare.R
 import cn.edu.nuc.androidlab.fileshare.bean.FileInfo
 import cn.edu.nuc.androidlab.fileshare.ui.fragment.*
 import cn.edu.nuc.androidlab.fileshare.util.FileUtil
+import kotlinx.android.synthetic.main.activity_choose_file.*
 
 class ChooseFileActivity : AppCompatActivity() {
 
@@ -20,6 +21,7 @@ class ChooseFileActivity : AppCompatActivity() {
     private lateinit var viewPager : ViewPager
     private lateinit var tabTitle : Array<String>
     private val fragments : ArrayList<Fragment> = ArrayList()
+    private val selectedFileInfos = HashMap<String, FileInfo>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,11 +31,46 @@ class ChooseFileActivity : AppCompatActivity() {
         initView()
     }
 
+    private fun updateSeleted(fileInfo: FileInfo, isSelect : Boolean){
+        if(isSelect){
+            selectedFileInfos.put(fileInfo.path, fileInfo)
+        }else{
+            selectedFileInfos.remove(fileInfo.path)
+        }
+
+        select.text = "已选(${selectedFileInfos.size})"
+    }
+
+    //待修改
     private fun initFragment() {
-        fragments.add(FileInfoFragment.instance(FileUtil.APK_CODE))
-        fragments.add(FileInfoFragment.instance(FileUtil.IMG_CODE))
-        fragments.add(FileInfoFragment.instance(FileUtil.MUSIC_CODE))
-        fragments.add(FileInfoFragment.instance(FileUtil.VIDEO_CODE))
+        val apk_fragment = FileInfoFragment.instance(FileUtil.APK_CODE)
+        apk_fragment.setOnSelectedListener(object : FileInfoFragment.OnSelectedListener{
+            override fun changeSelected(fileInfo: FileInfo, isSelect: Boolean) {
+                updateSeleted(fileInfo, isSelect)
+            }
+        })
+        val img_fragment = FileInfoFragment.instance(FileUtil.IMG_CODE)
+        img_fragment.setOnSelectedListener(object : FileInfoFragment.OnSelectedListener{
+            override fun changeSelected(fileInfo: FileInfo, isSelect: Boolean) {
+                updateSeleted(fileInfo, isSelect)
+            }
+        })
+        val music_fragment = FileInfoFragment.instance(FileUtil.MUSIC_CODE)
+        music_fragment.setOnSelectedListener(object : FileInfoFragment.OnSelectedListener{
+            override fun changeSelected(fileInfo: FileInfo, isSelect: Boolean) {
+                updateSeleted(fileInfo, isSelect)
+            }
+        })
+        val video_fragment = FileInfoFragment.instance(FileUtil.VIDEO_CODE)
+        video_fragment.setOnSelectedListener(object : FileInfoFragment.OnSelectedListener{
+            override fun changeSelected(fileInfo: FileInfo, isSelect: Boolean) {
+                updateSeleted(fileInfo, isSelect)
+            }
+        })
+        fragments.add(apk_fragment)
+        fragments.add(img_fragment)
+        fragments.add(music_fragment)
+        fragments.add(video_fragment)
     }
 
     fun initView(){

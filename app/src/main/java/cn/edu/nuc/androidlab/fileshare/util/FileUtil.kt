@@ -5,8 +5,10 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.PixelFormat
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.media.ThumbnailUtils
 import android.net.Uri
@@ -239,8 +241,17 @@ object FileUtil{
     }
 
     fun getVideoThumbnail(context : Context, path : String) : Bitmap {
-        val bitmap = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.MICRO_KIND)
-        return ThumbnailUtils.extractThumbnail(bitmap, 100 , 100)
+        val bitmap : Bitmap? = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.MICRO_KIND)
+        var thumbnail : Bitmap? = ThumbnailUtils.extractThumbnail(bitmap, 100 , 100)
+        if(thumbnail === null) {
+            Log.i(TAG, "what fuck")
+            thumbnail = drawableToBitmap(context.getDrawable(R.drawable.ic_videocam_black_24dp))
+            if(thumbnail === null){
+                thumbnail = (context.resources.getDrawable(R.drawable.ic_videocam_black_24dp) as BitmapDrawable).bitmap
+                Log.i(TAG, "WHAT FUCK IS THIS SHIT")
+            }
+        }
+        return thumbnail!!
     }
 
     fun getApkThumbnail(context : Context, path : String) : Drawable{
