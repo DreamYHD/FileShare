@@ -1,5 +1,6 @@
 package cn.edu.nuc.androidlab.fileshare.ui.activity
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -92,6 +93,15 @@ class ChooseFileActivity : AppCompatActivity() {
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.setTabsFromPagerAdapter(adapter)
+
+        next.setOnClickListener {
+            val intent = Intent()
+            intent.setClass(ChooseFileActivity@this, ChooseReceiverActivity::class.java)
+            val bundle = Bundle()
+            bundle.putSerializable("fileInfos" , selectedFileInfos)
+            intent.putExtras(bundle)
+            startActivity(intent)
+        }
     }
 
     class MyFragmentPagerAdapter(fm : FragmentManager,

@@ -1,18 +1,14 @@
-package cn.edu.nuc.androidlab.fileshare
+package cn.edu.nuc.androidlab.fileshare.ui.activity
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.widget.Button
-import cn.edu.nuc.androidlab.fileshare.ui.activity.ChooseFileActivity
-import cn.edu.nuc.androidlab.fileshare.util.ApUtil
+import cn.edu.nuc.androidlab.fileshare.R
 import cn.edu.nuc.androidlab.fileshare.util.FileUtil
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.content_main.*
@@ -58,9 +54,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         bt_receive.setOnClickListener {
-            Log.i(TAG, "hotspot")
-            //val apUtil = ApUtil.configApState(this, "ApTest")
-            Log.i(TAG, ApUtil.isApEnabled(this).toString())
+            startActivity(Intent(MainActivity@this, ReceiverWaitingActivity::class.java))
         }
     }
 

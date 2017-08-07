@@ -1,10 +1,14 @@
 package cn.edu.nuc.androidlab.fileshare.util;
 
 import android.content.Context;
+import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,12 +17,15 @@ import java.util.List;
  */
 
 public class WifiUtil {
+    private final static String TAG = WifiUtil.class.getSimpleName();
 
     private static WifiUtil wifiUtil;
     private Context context;
     private WifiManager wifiManager;
     private WifiConfiguration wifiConfiguration;
     private WifiInfo wifiInfo;
+    private String NO_PASSWORD = "[ESS]";
+    private String NO_PASSWORD_WPS = "[WPS][ESS]";
 
     public static WifiUtil getInstance(Context context){
         if(wifiUtil == null){
@@ -75,6 +82,21 @@ public class WifiUtil {
         return scanResults;
     }
 
+    public List<ScanResult> getScanResultWithNoPassword(){
+        List<ScanResult> origin = getScanResult();
+        List<ScanResult> results = new ArrayList<>();
+        if(origin.size() > 0){
+            for(ScanResult result : origin){
+                if(result.capabilities.equals(NO_PASSWORD)
+                        || result.capabilities.equals(NO_PASSWORD_WPS)){
+                    results.add(result);
+                }
+            }
+        }
+
+        return results;
+    }
+
     /**
      * get configured Wi-Fi network
      */
@@ -89,6 +111,30 @@ public class WifiUtil {
     public WifiInfo getConnectionInfo(){
         wifiInfo = wifiManager.getConnectionInfo();
         return wifiInfo;
+    }
+
+    public String getIpAddressFromHotspot(){
+        String ipAddress;
+        DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+        int address = dhcpInfo.gateway;
+        ipAddress = ((address & 0xFF)
+                + "." + ((address >> 8) & 0xFF)
+                + "." + ((address >> 16) & 0xFF)
+                + "." + ((address >> 24) & 0xFF));
+        return ipAddress;
+    }
+
+    public String getLocalIpAddress(){
+        // WifiAP ip address is hardcoded in Android.
+        /* IP/netmask: 192.168.43.1/255.255.255.0 */
+        String ipAddress;
+        DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+        int address = dhcpInfo.serverAddress;
+        ipAddress = ((address & 0xFF)
+                + "." + ((address >> 8) & 0xFF)
+                + "." + ((address >> 16) & 0xFF)
+                + "." + ((address >> 24) & 0xFF));
+        return ipAddress;
     }
 
 

@@ -19,7 +19,11 @@ class  FileInfo @JvmOverloads constructor(var path : String,
                val procceed : Long? = null,
                val result : Int?= null) :Serializable{
 
+
+
     companion object {
+        private val serialVersionUID = 8711368828010083044L
+
         @JvmStatic
         val APK : String = ".apk"
 
