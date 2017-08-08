@@ -6,7 +6,6 @@ import cn.edu.nuc.androidlab.fileshare.util.FileUtil
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.OutputStream
 import java.net.Socket
 
 /**
@@ -40,7 +39,7 @@ class SendTransfer(val context : Context,
     override fun parseHeader() {
         // 基本信息
         val headerSb : StringBuilder = StringBuilder()
-        val jsonStr : String = "$TYPE_FILE$separator${fileInfo.toJosnString()}"
+        val jsonStr : String = "$TYPE_FILE$separator${fileInfo.toJsonString()}"
         headerSb.append(jsonStr)
         for(i in 0..(BYTE_SIZE_HEADER-jsonStr.toByteArray(Charsets.UTF_8).size)){
             headerSb.append(" ")

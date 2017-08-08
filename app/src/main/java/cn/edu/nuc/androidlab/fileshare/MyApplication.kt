@@ -1,6 +1,8 @@
 package cn.edu.nuc.androidlab.fileshare
 
 import android.app.Application
+import cn.edu.nuc.androidlab.fileshare.bean.FileInfo
+import java.util.concurrent.Executors
 import kotlin.properties.Delegates
 
 /**
@@ -9,11 +11,26 @@ import kotlin.properties.Delegates
 class MyApplication : Application(){
 
     companion object {
-        val instance  : MyApplication by Delegates.notNull()
+
+        var instance  : MyApplication by Delegates.notNull()
     }
+
+    val fileInfoMap = HashMap<String, FileInfo>()
+    val mainExecutor = Executors.newFixedThreadPool(5)
 
     override fun onCreate() {
         super.onCreate()
+        instance = MyApplication()
     }
+
+    fun addFileInfo(fileInfo : FileInfo){
+        fileInfoMap.put(fileInfo.path, fileInfo)
+    }
+
+    fun removeFileInfo(fileInfo : FileInfo){
+        fileInfoMap.remove(fileInfo.path)
+    }
+
+
 
 }

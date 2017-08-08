@@ -20,4 +20,11 @@
         android:layout_width="150dp"
         android:layout_height="75dp" />
 
+    <Button
+        android:id="@+id/whiteboard"
+        android:text="共享白板"
+        app:layout_constraintBottom_toTopOf="parent"
+        android:layout_width="150dp"
+        android:layout_height="75dp" />
+
 </android.support.constraint.ConstraintLayout>

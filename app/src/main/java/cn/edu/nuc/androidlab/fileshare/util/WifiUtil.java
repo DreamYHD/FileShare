@@ -24,6 +24,11 @@ public class WifiUtil {
     private WifiManager wifiManager;
     private WifiConfiguration wifiConfiguration;
     private WifiInfo wifiInfo;
+
+    public static final int WIFICIPHER_NOPASS = 1;
+    public static final int WIFICIPHER_WEP = 2;
+    public static final int WIFICIPHER_WPA = 3;
+
     private String NO_PASSWORD = "[ESS]";
     private String NO_PASSWORD_WPS = "[WPS][ESS]";
 
@@ -62,6 +67,73 @@ public class WifiUtil {
         if(wifiManager.isWifiEnabled())
             wifiManager.setWifiEnabled(false);
         return !wifiManager.isWifiEnabled();
+    }
+
+    /**
+     * connect Wi-Fi
+     */
+    public boolean connectWifi(WifiConfiguration wf){
+        if(!disconnectWifi()){
+            openWiFi();
+        }
+        int netId = wifiManager.addNetwork(wf);
+        Log.i(TAG, netId + "");
+        return wifiManager.enableNetwork(netId, true);
+    }
+
+    /**
+     * disconnect Wi-Fi
+     * @return false -> wifi is not enabled
+     */
+    public boolean disconnectWifi(){
+        if(wifiManager != null && wifiManager.isWifiEnabled()){
+            int netId = wifiManager.getConnectionInfo().getNetworkId();
+            wifiManager.disableNetwork(netId);
+            return wifiManager.disconnect();
+        }
+        return false;
+    }
+
+    public WifiConfiguration createWifiCfg(String ssid, String password, int type){
+        WifiConfiguration config = new WifiConfiguration();
+        config.allowedAuthAlgorithms.clear();
+        config.allowedGroupCiphers.clear();
+        config.allowedKeyManagement.clear();
+        config.allowedPairwiseCiphers.clear();
+        config.allowedProtocols.clear();
+
+        config.SSID = "\"" + ssid + "\"";
+
+        if(type == WIFICIPHER_NOPASS){
+//            config.wepKeys[0] = "";
+//            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            config.wepTxKeyIndex = 0;
+
+//            无密码连接WIFI时，连接不上wifi，需要注释两行代码
+//            config.wepKeys[0] = "";
+//            config.wepTxKeyIndex = 0;
+        }else if(type == WIFICIPHER_WEP){
+            config.hiddenSSID = true;
+            config.wepKeys[0]= "\""+password+"\"";
+            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+            config.wepTxKeyIndex = 0;
+        }else if(type == WIFICIPHER_WPA){
+            config.preSharedKey = "\""+password+"\"";
+            config.hiddenSSID = true;
+            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+            config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+            config.status = WifiConfiguration.Status.ENABLED;
+        }
+
+        return config;
     }
 
     /**
@@ -114,7 +186,7 @@ public class WifiUtil {
     }
 
     public String getIpAddressFromHotspot(){
-        String ipAddress;
+        String ipAddress = "192.168.43.1";
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
         int address = dhcpInfo.gateway;
         ipAddress = ((address & 0xFF)
@@ -127,7 +199,7 @@ public class WifiUtil {
     public String getLocalIpAddress(){
         // WifiAP ip address is hardcoded in Android.
         /* IP/netmask: 192.168.43.1/255.255.255.0 */
-        String ipAddress;
+        String ipAddress = "192.168.43.1";
         DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
         int address = dhcpInfo.serverAddress;
         ipAddress = ((address & 0xFF)

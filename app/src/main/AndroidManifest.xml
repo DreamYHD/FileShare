@@ -34,6 +34,8 @@
         <activity android:name=".ui.activity.ChooseFileActivity" />
         <activity android:name=".ui.activity.ChooseReceiverActivity"/>
         <activity android:name=".ui.activity.ReceiverWaitingActivity"/>
+        <activity android:name=".ui.activity.SendFileActivity"/>
+        <activity android:name=".ui.activity.ReceiveFileActivity"/>
     </application>
 
 </manifest>

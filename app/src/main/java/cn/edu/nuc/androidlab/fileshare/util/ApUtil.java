@@ -1,6 +1,5 @@
 package cn.edu.nuc.androidlab.fileshare.util;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -12,6 +11,7 @@ import java.lang.reflect.Method;
  * Created by MurphySL on 2017/7/3.
  */
 public class ApUtil {
+    public static final String ACTION_WIFI_AP_STATE_CHANGED = "android.net.wifi.WIFI_AP_STATE_CHANGED";
 
     public static boolean isApEnabled(Context context) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);

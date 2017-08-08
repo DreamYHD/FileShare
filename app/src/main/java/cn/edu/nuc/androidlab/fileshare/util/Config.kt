@@ -9,6 +9,9 @@ class Config{
     companion object {
 
         @JvmStatic
+        val DEFAULT_SSID = "Murphy"
+
+        @JvmStatic
         val DEFAULT_SERVER_PORT = 8088
 
         @JvmStatic
@@ -22,6 +25,9 @@ class Config{
 
         @JvmStatic
         val MSG_RECEIVER_INIT_SUCCESS = "MSG_RECEIVER_INIT_SUCCESS"
+
+        @JvmStatic
+        val KEY_IP_PORT_INFO = "KEY_IP_PORT_INFO"
 
     }
 }

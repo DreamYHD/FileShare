@@ -7,8 +7,8 @@ class NetworkUtil{
 
     companion object {
         @JvmStatic
-        fun pingIpAddress(ipAdress : String) : Boolean{
-            val process : Process = Runtime.getRuntime().exec("/system/bin/ping -c 1 -w 100" + ipAdress)
+        fun pingIpAddress(ipAddress : String) : Boolean{
+            val process : Process = Runtime.getRuntime().exec("/system/bin/ping -c 1 -w 100 " + ipAddress)
             val status = process.waitFor()
 
             return status == 0
