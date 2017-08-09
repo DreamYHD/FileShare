@@ -299,5 +299,68 @@ object FileUtil{
         return baos.toByteArray()
     }
 
+    fun getRootDirPath(context : Context): String {
+        val packageNmae = context.packageName
+        var path = "/mnt/download/$packageNmae/"
+        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+            path = Environment.getExternalStorageDirectory().toString() + "/$packageNmae/"
+        }
+        return path
+    }
+
+    /**
+     * 获取指定的文件夹路径
+     * @param type @@See FileInfo.java
+     * *
+     * @return
+     */
+    fun getSpecifyDirPath(context: Context, type: Int): String {
+        var dirPath = getRootDirPath(context)
+
+        when (type) {
+            APK_CODE -> {
+                dirPath += "apk/"
+            }
+            IMG_CODE -> {
+                dirPath += "img/"
+            }
+            MUSIC_CODE -> {
+                dirPath += "music/"
+            }
+            VIDEO_CODE -> {
+                dirPath += "video/"
+            }
+            else -> dirPath += "other/"
+        }
+
+        return dirPath
+    }
+
+    fun createLocalFile(context: Context, path: String): File {
+        val fileName = path.substringAfterLast(".")
+
+        var dirPath = getRootDirPath(context)
+
+        if (fileName.lastIndexOf(APK) > 0) {
+            dirPath = getSpecifyDirPath(context, APK_CODE)
+        } else if (fileName.lastIndexOf(JPG) > 0 || fileName.lastIndexOf(JPEG) > 0) {
+            dirPath = getSpecifyDirPath(context, IMG_CODE)
+        } else if (fileName.lastIndexOf(MP3) > 0) {
+            dirPath = getSpecifyDirPath(context, MUSIC_CODE)
+        } else if (fileName.lastIndexOf(MP4) > 0) {
+            dirPath = getSpecifyDirPath(context, VIDEO_CODE)
+        } else {
+            dirPath = getSpecifyDirPath(context, -1)
+        }
+
+        val dirFile = File(dirPath)
+        if (!dirFile.exists()) {
+            dirFile.mkdirs()
+        }
+        val file = File(dirFile, fileName)
+
+        return file
+    }
+
 
 }

@@ -68,7 +68,7 @@ class SendTransfer(val context : Context,
 
         var startTime = System.currentTimeMillis()
         var endTime = 0L
-        var total = 0L
+        var total = 0L // 已传部分
         var len = 0
         val bytes = ByteArray(BYTE_SIZE_DATA)
 

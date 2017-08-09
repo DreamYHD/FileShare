@@ -73,6 +73,7 @@ class ChooseReceiverActivity : AppCompatActivity(){
 
         next.setOnClickListener {
             if(receiver.text.isNotEmpty()){
+                WifiUtil.getInstance(this).openWiFi()
                 val ssid = receiver.text.toString()
                 val status =
                         WifiUtil.getInstance(ChooseReceiverActivity@this)
@@ -95,11 +96,6 @@ class ChooseReceiverActivity : AppCompatActivity(){
     }
 
     private fun startSenderServer(ip : String, port : Int){
-
-        if(!WifiUtil.getInstance(this).isWiFiEnabled){
-            WifiUtil.getInstance(this).openWiFi()
-        }
-
         var time = 0
         var receiverIp = ip
 
@@ -151,11 +147,12 @@ class ChooseReceiverActivity : AppCompatActivity(){
 
         //接收接收方初始化反馈
         while(true){
-            val receiverPacket = DatagramPacket(receiverData, receiverData.size, ipAddress, port)
+            val receiverPacket = DatagramPacket(receiverData, receiverData.size)
             datagramSocket!!.receive(receiverPacket)
             val response = String(receiverPacket.data, Charsets.UTF_8).trim()
 
-            if(response.isNotEmpty() && response == Config.MSG_RECEIVER_INIT_SUCCESS){
+            Log.i(TAG, response)
+            if(response.isNotEmpty() && response.startsWith(Config.MSG_RECEIVER_INIT_SUCCESS)){
                 Log.i(TAG, "get msg from receiver : $response")
                 // 通知即将发送
 
@@ -196,7 +193,9 @@ class ChooseReceiverActivity : AppCompatActivity(){
                 .subscribe {
                     granted ->
                     if(granted){
-                        WifiUtil.getInstance(this).openWiFi()
+                        if(!WifiUtil.getInstance(this).isWiFiEnabled){
+                            WifiUtil.getInstance(this).openWiFi()
+                        }
                         updateScanResults()
                     }else{
                         Log.i(TAG, "获取权限失败")
