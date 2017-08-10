@@ -1,6 +1,7 @@
 package cn.edu.nuc.androidlab.fileshare.core
 
 import android.content.Context
+import android.util.Log
 import cn.edu.nuc.androidlab.fileshare.bean.FileInfo
 import cn.edu.nuc.androidlab.fileshare.util.FileUtil
 import java.io.BufferedOutputStream
@@ -15,6 +16,7 @@ class SendTransfer(val context : Context,
                    val fileInfo : FileInfo,
                    serverIpAddress : String,
                    port : Int) : BaseTransfer(), Runnable{
+    private val TAG : String = this.javaClass.simpleName
 
     private val socket : Socket = Socket(serverIpAddress, port)
     private val bos : BufferedOutputStream = BufferedOutputStream(socket.getOutputStream())
@@ -37,9 +39,12 @@ class SendTransfer(val context : Context,
     }
 
     override fun parseHeader() {
+        Log.i(TAG, "parseHeader")
         // 基本信息
         val headerSb : StringBuilder = StringBuilder()
         val jsonStr : String = "$TYPE_FILE$separator${fileInfo.toJsonString()}"
+
+        Log.i(TAG, jsonStr)
         headerSb.append(jsonStr)
         for(i in 0..(BYTE_SIZE_HEADER-jsonStr.toByteArray(Charsets.UTF_8).size)){
             headerSb.append(" ")
@@ -63,6 +68,7 @@ class SendTransfer(val context : Context,
     }
 
     override fun parseBody() {
+        Log.i(TAG, "parseBody")
         val file_size = fileInfo.size
         val fis = FileInputStream(File(fileInfo.path))
 

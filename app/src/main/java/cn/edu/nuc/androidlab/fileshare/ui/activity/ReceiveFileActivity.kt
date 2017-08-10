@@ -109,8 +109,9 @@ class ReceiveFileActivity : AppCompatActivity(){
                     }
 
                     override fun onGetFileInfo(fileInfo: FileInfo) {
+                        Log.i(TAG, "GET FILE : ${fileInfo.name}")
                         fileInfoList.add(fileInfo)
-                        adapter.notifyDataSetChanged()
+                        //adapter.notifyDataSetChanged()
                     }
 
                     override fun onGetThumbnail(bitmap: Bitmap) {

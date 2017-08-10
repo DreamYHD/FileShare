@@ -58,8 +58,10 @@ class ReceiveTransfer(val context : Context, val socket: Socket) : BaseTransfer(
         }
         Log.i(TAG, "thumbnail size : $total")
 
-        val bitmap = BitmapFactory.decodeByteArray(thumbnail, 0, thumbnail.lastIndex)
-        onReceiveListener?.onGetThumbnail(bitmap)
+        val bitmap : Bitmap? = BitmapFactory.decodeByteArray(thumbnail, 0, thumbnail.size)
+        bitmap?.let {
+            onReceiveListener?.onGetThumbnail(bitmap)
+        }
 
         val json = String(header, Charsets.UTF_8)
         Log.i(TAG, json)
@@ -73,6 +75,7 @@ class ReceiveTransfer(val context : Context, val socket: Socket) : BaseTransfer(
 
     override fun parseBody() {
         fileInfo?.let {
+            Log.i(TAG, "parseBody")
             val fileSize = it.size
             val bos = FileOutputStream(FileUtil.createLocalFile(context, it.path))
             val startTime = System.currentTimeMillis()
@@ -91,7 +94,9 @@ class ReceiveTransfer(val context : Context, val socket: Socket) : BaseTransfer(
                     currentTime = startTime
                     onReceiveListener?.onProgress(total, fileSize)
                 }
+                len = ins.read(bytes)
             }
+            Log.i(TAG, "parse body end")
 
             val endTime = System.currentTimeMillis()
             onReceiveListener?.onSuccess(it)

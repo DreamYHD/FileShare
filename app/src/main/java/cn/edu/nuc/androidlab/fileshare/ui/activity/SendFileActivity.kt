@@ -38,8 +38,9 @@ class SendFileActivity : AppCompatActivity(){
     }
 
     private fun initData() {
-        MyApplication.instance.fileInfoMap.values.forEach {
+        MyApplication.instance.fileInfoMap.values.toList().forEach {
             fileInfoList.add(it)
+            Log.i(TAG, it.name)
         }
     }
 
@@ -80,26 +81,27 @@ class SendFileActivity : AppCompatActivity(){
             fileSender.setOnSendListener(object : SendTransfer.OnSendListener{
                 override fun onStart() {
                     startTime = System.currentTimeMillis()
+                    Log.i(TAG, "START")
                 }
 
                 override fun onProgress(progress: Long, total: Long) {
-                    size.text = FileUtil.byte2MemorySize(progress + sendSize)
+                    //size.text = FileUtil.byte2MemorySize(progress + sendSize)
                     filetotal = total
+                    Log.i(TAG, "Progress:$progress $total")
                 }
 
                 override fun onSuccess(fileInfo: FileInfo) {
                     sendSize += filetotal
                     Log.i(TAG, "send success : ${fileInfo.name}")
-                    Snackbar.make(recycler_view, "发送成功", Snackbar.LENGTH_LONG).show()
+                    //Snackbar.make(recycler_view, "发送成功", Snackbar.LENGTH_LONG).show()
                 }
 
                 override fun onFailure(t: Throwable, fileInfo: FileInfo) {
-                    Log.i(TAG, "send success : ${fileInfo.name}")
+                    Log.i(TAG, "send fail : $t ${fileInfo.name}")
                 }
             })
 
             MyApplication.instance.mainExecutor.execute(fileSender)
         }
-        Log.i(TAG, "传输完成")
     }
 }
