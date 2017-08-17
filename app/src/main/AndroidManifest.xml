@@ -36,6 +36,9 @@
         <activity android:name=".ui.activity.ReceiverWaitingActivity"/>
         <activity android:name=".ui.activity.SendFileActivity"/>
         <activity android:name=".ui.activity.ReceiveFileActivity"/>
+        <activity android:name=".ui.activity.whiteboard.WhiteBoardActivity"/>
+        <activity android:name=".ui.activity.whiteboard.ClientWhiteBoardActivity"/>
+        <activity android:name=".ui.activity.whiteboard.ChooseClientActivity"/>
     </application>
 
 </manifest>

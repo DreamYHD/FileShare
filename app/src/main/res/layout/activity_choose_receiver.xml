@@ -17,4 +17,10 @@
         android:layout_width="100dp"
         android:layout_height="50dp" />
 
+    <Button
+        android:id="@+id/whiteboard"
+        android:text="开启白板"
+        android:layout_width="100dp"
+        android:layout_height="50dp" />
+
 </LinearLayout>

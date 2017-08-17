@@ -37,6 +37,8 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxandroid:2.0.0'
     compile 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
     compile 'com.contrarywind:Android-PickerView:3.2.5'
+
+    compile 'com.yinghe:whiteboardlib:1.1.1'
     testCompile 'junit:junit:4.12'
 }
 repositories {

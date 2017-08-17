@@ -1,4 +1,4 @@
-package cn.edu.nuc.androidlab.fileshare.ui.activity
+package cn.edu.nuc.androidlab.fileshare.ui.activity.whiteboard
 
 import android.Manifest
 import android.content.Intent
@@ -12,7 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import cn.edu.nuc.androidlab.fileshare.MyApplication
 import cn.edu.nuc.androidlab.fileshare.R
-import cn.edu.nuc.androidlab.fileshare.ui.activity.whiteboard.WhiteBoardActivity
+import cn.edu.nuc.androidlab.fileshare.ui.activity.SendFileActivity
 import cn.edu.nuc.androidlab.fileshare.util.Config
 import cn.edu.nuc.androidlab.fileshare.util.NetworkUtil
 import cn.edu.nuc.androidlab.fileshare.util.WifiUtil
@@ -24,13 +24,9 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 
 /**
- * 选择接收者
- * WA : WIFI 变更
- * options 泛型
- *
- * Created by MurphySL on 2017/8/7.
+ * Created by MurphySL on 2017/8/13.
  */
-class ChooseReceiverActivity : AppCompatActivity(){
+class ChooseClientActivity : AppCompatActivity(){
     private val TAG : String = this.javaClass.simpleName
 
     private val receivers = HashMap<String, ScanResult>()
@@ -79,7 +75,7 @@ class ChooseReceiverActivity : AppCompatActivity(){
                 val ssid = receiver.text.toString()
                 val status =
                         WifiUtil.getInstance(ChooseReceiverActivity@this)
-                        .connectWifi(WifiUtil.getInstance(ChooseReceiverActivity@this).createWifiCfg(ssid, null, WifiUtil.WIFICIPHER_NOPASS))
+                                .connectWifi(WifiUtil.getInstance(ChooseReceiverActivity@this).createWifiCfg(ssid, null, WifiUtil.WIFICIPHER_NOPASS))
                 if(status){
                     // 通知接收方准备
                     val task = createClientRunnable(WifiUtil.getInstance(this).ipAddressFromHotspot)
@@ -93,9 +89,9 @@ class ChooseReceiverActivity : AppCompatActivity(){
     }
 
     private fun createClientRunnable(ip : String) : Runnable =
-    Runnable {
-        startSenderServer(ip, Config.DEFAULT_SERVER_PORT)
-    }
+            Runnable {
+                startSenderServer(ip, Config.DEFAULT_SERVER_PORT)
+            }
 
     private fun startSenderServer(ip : String, port : Int){
         var time = 0
@@ -133,9 +129,6 @@ class ChooseReceiverActivity : AppCompatActivity(){
         val receiverData = ByteArray(1024)
         val ipAddress = InetAddress.getByName(receiverIp)
 
-        //发送文件
-        sendFileInfo(ipAddress, port)
-
         //发送初始化信息
         val sendData = Config.MSG_SEND_INIT.toByteArray(Charsets.UTF_8)
         val sendPacket = DatagramPacket(sendData, sendData.size, ipAddress, port)
@@ -158,31 +151,10 @@ class ChooseReceiverActivity : AppCompatActivity(){
                 Log.i(TAG, "get msg from receiver : $response")
                 // 通知即将发送
 
-                startActivity(Intent(ChooseReceiverActivity@this, SendFileActivity::class.java))
+                startActivity(Intent(ChooseClientActivity@this, WhiteBoardActivity::class.java))
             }
         }
 
-    }
-
-    /**
-     * 发送文件列表
-     */
-    private fun sendFileInfo(ipAddress : InetAddress, port: Int) {
-        val fileInfoList = MyApplication.instance.fileInfoMap.values.toList()
-        fileInfoList.forEach {
-            val fileInfoJson = it.toJsonString()
-            Log.i(TAG, fileInfoJson)
-            Log.i(TAG, "${fileInfoJson.toByteArray().size}")
-
-            val sendPacket : DatagramPacket = DatagramPacket(fileInfoJson.toByteArray(), fileInfoJson.toByteArray().size, ipAddress, port)
-            try {
-                datagramSocket!!.send(sendPacket)
-                Log.i(TAG, "sendFileInfo success: ${it.name}")
-            }catch (e : Exception){
-                Log.i(TAG, "sendFileInfo fail: ${it.name}")
-                e.printStackTrace()
-            }
-        }
     }
 
     private fun requestPermissions() {

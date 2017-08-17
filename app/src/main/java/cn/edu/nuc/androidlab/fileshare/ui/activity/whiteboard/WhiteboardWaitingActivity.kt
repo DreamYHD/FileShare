@@ -1,4 +1,4 @@
-package cn.edu.nuc.androidlab.fileshare.ui.activity
+package cn.edu.nuc.androidlab.fileshare.ui.activity.whiteboard
 
 import android.Manifest
 import android.content.Intent
@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import cn.edu.nuc.androidlab.fileshare.MyApplication
 import cn.edu.nuc.androidlab.fileshare.R
-import cn.edu.nuc.androidlab.fileshare.bean.FileInfo
 import cn.edu.nuc.androidlab.fileshare.bean.IpPortInfo
 import cn.edu.nuc.androidlab.fileshare.ui.receiver.WifiBroadcastReceiver
 import cn.edu.nuc.androidlab.fileshare.util.ApUtil
@@ -26,12 +25,9 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 
 /**
- * 等待接收页面
- * WA接收数据刷新
- * MSG
- * Created by MurphySL on 2017/8/7.
+ * Created by MurphySL on 2017/8/13.
  */
-class ReceiverWaitingActivity : AppCompatActivity(){
+class WhiteboardWaitingActivity : AppCompatActivity(){
     private val TAG : String = this.javaClass.simpleName
 
     private val REQUEST_WRITE_SETTINGS_CODE = 0x00
@@ -44,6 +40,7 @@ class ReceiverWaitingActivity : AppCompatActivity(){
 
         requestWriteSettingPermission()
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -109,9 +106,9 @@ class ReceiverWaitingActivity : AppCompatActivity(){
     }
 
     private fun createSendMsgRunnable() =
-    Runnable {
-        startReceiverServer(Config.DEFAULT_SERVER_PORT)
-    }
+            Runnable {
+                startReceiverServer(Config.DEFAULT_SERVER_PORT)
+            }
 
     private fun confirm() : Boolean{
         var time = 0
@@ -144,22 +141,16 @@ class ReceiverWaitingActivity : AppCompatActivity(){
             msg?.let{
                 val inetAddress : InetAddress = datagramPacket.address
                 val senderPort : Int = datagramPacket.port
-
-                Log.i(TAG, "sender port : $port")
-                if(msg.isNotEmpty() && msg.startsWith(Config.MSG_SEND_INIT)){
+                if(msg.startsWith(Config.MSG_SEND_INIT)){
 
                     Log.i(TAG, "receive sender init msg success")
 
                     val intent = Intent()
-                    intent.setClass(ReceiverWaitingActivity@this, ReceiveFileActivity::class.java)
+                    intent.setClass(WhiteboardWaitingActivity@this, ClientWhiteBoardActivity::class.java)
                     val bundle = Bundle()
                     bundle.putSerializable(Config.KEY_IP_PORT_INFO, IpPortInfo(inetAddress, senderPort))
                     intent.putExtras(bundle)
                     startActivity(intent)
-                }else{
-                    // 文件列表
-                    Log.i(TAG, "GET FileInfo")
-                    parseFileInfo("$msg}")
                 }
                 receiveData = ByteArray(1024)
             }
@@ -171,16 +162,6 @@ class ReceiverWaitingActivity : AppCompatActivity(){
             it.disconnect()
             it.close()
         }
-    }
-
-    private fun parseFileInfo(msg: String) {
-        Log.i(TAG, msg)
-        val fileInfo = FileInfo.toFileInfo(msg)
-        fileInfo?.let {
-            Log.i(TAG, it.name)
-            MyApplication.instance.addFileInfo(it)
-        }
-
     }
 
 }
